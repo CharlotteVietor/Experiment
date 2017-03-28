@@ -1,0 +1,50 @@
+numSubjects = 50;
+A(1:numSubjects,1) = rand(numSubjects,1)*0.005+0.99;
+A(1:numSubjects,2) = rand(numSubjects,1)*0.04+0.92;
+B(1:numSubjects,1) = rand(numSubjects,1)*0.05+0.10;
+B(1:numSubjects,2) = rand(numSubjects,1)*0.10+0.20;
+numTrials = 1218;
+rSub=abs(-0.1*zscore(B(:,1))+0.8+0.2*randn(numSubjects,1));
+qSub = [abs(B(:,1)+0.07*randn(numSubjects,1)), abs(0.5+0.1*randn(numSubjects,1))];
+C = [1,1];
+K = 1;
+t = (1:768)';
+p(1:450)=0;
+p(451:1218) = 10.*(sin(2*pi*(1/768)*t) + sin(2*pi*(2/768)*t) + sin(2*pi*(4/768)*t) + sin(2*pi*(8/768)*t) + sin(2*pi*(16/768)*t));
+ 
+ StrPar.A=A;
+ StrPar.B=B;
+ StrPar.q=qSub;
+ StrPar.r=rSub;
+ 
+ 
+    
+for s=1:numSubjects
+    %% trial parameters
+    y = zeros(numTrials,1);
+    x = zeros(numTrials,2);
+    e = zeros(numTrials,2);
+    indexes = randperm(450);
+    V=zeros(1,450);
+    V(indexes(1:225))=1;
+    V(451:1218)=1;
+    
+    q = repmat(qSub(s,:),numTrials,1).*randn(numTrials,2);
+    r = rSub(s).*randn(numTrials,2);
+    %% Loop through trials
+    for n=1:numTrials
+        y(n) = x(n,1)+x(n,2) + r(n);
+        e(n,1) = (y(n) + p(n));
+        e(n,2) = y(n) + p(n);
+ 
+        x(n+1, 1) = A(s,1)*x(n,1) - B(s,1)* e(n,1)*V(n) + q(n,1);
+        x(n+1, 2) = A(s,2)*x(n,2) - B(s,2)* e(n,2)*V(n) + q(n,2);
+    end;
+    
+    StrSim(s).x = x;
+    StrSim(s).e = e;
+    StrSim(s).y = y;
+    StrSim(s).V=V';
+    StrSim(s).p=p';
+    
+end
