@@ -1,0 +1,119 @@
+numSubjects = 50;
+ 
+mAimp = 0.98;
+vAimp = 0.005^2;
+mAexp = 0.94;
+vAexp = 0.03^2;
+ 
+muAimp = log((mAimp^2)/sqrt(vAimp+mAimp^2));
+sigmaAimp = sqrt(log(vAimp/(mAimp^2)+1));
+muAexp = log((mAexp^2)/sqrt(vAexp+mAexp^2));
+sigmaAexp = sqrt(log(vAexp/(mAexp^2)+1));
+ 
+A(1:numSubjects,1) = lognrnd(muAimp, sigmaAimp, numSubjects, 1);
+A(1:numSubjects,2) = lognrnd(muAexp, sigmaAexp,  numSubjects, 1);
+ 
+mrSub = 0.6;
+vrSub = 0.2^2;
+murSub = log((mrSub^2)/sqrt(vrSub+mrSub^2));
+sigmarSub = sqrt(log(vrSub/(mrSub^2)+1));
+ 
+mqSubimp = 0.24;
+vqSubimp = 0.03^2;
+mqSubexp = 0.6;
+vqSubexp = 0.1^2;
+muqSubimp = log((mqSubimp^2)/sqrt(vqSubimp+mqSubimp^2));
+sigmaqSubimp = sqrt(log(vqSubimp/(mqSubimp^2)+1));
+muqSubexp = log((mqSubexp^2)/sqrt(vqSubexp+mqSubexp^2));
+sigmaqSubexp = sqrt(log(vqSubexp/(mqSubexp^2)+1));
+ 
+rSub= lognrnd(murSub, sigmarSub, numSubjects, 1);
+qSub = [abs(lognrnd(muqSubimp, sigmaqSubimp, numSubjects, 1)) abs(lognrnd(muqSubexp, sigmaqSubexp, numSubjects, 1))];
+ 
+C = [1,1];
+numTrials = 1218;
+K = 1;
+t = (1:768)';
+p(1:450)=0;
+p(451:1218) = 10.*(sin(2*pi*(1/768)*t) + sin(2*pi*(2/768)*t) + sin(2*pi*(4/768)*t) + sin(2*pi*(8/768)*t) + sin(2*pi*(16/768)*t));
+ 
+ StratPar.A=A;
+ StratPar.q=qSub;
+ StratPar.r=rSub;
+    
+for s=1:numSubjects
+    %% trial parameters
+    y = zeros(numTrials,1);
+    x = zeros(numTrials,2);
+    e = zeros(numTrials,2);
+    indexes = randperm(450);
+    V=zeros(1,450);
+    V(indexes(1:225))=1;
+    V(451:1218)=1;
+    
+    q = repmat(qSub(s,:),numTrials,1).*randn(numTrials,2);
+    r = rSub(s).*randn(numTrials,2);
+    [Ximp, Limp, Gimp] = dare(A(s,1), 1, q(s,1), r(s,1));
+    [Xexp, Lexp, Gexp] = dare(A(s,2), 1, q(s,2), r(s,1));
+   
+    %% Loop through trials
+    for n=1:numTrials
+        y(n) = x(n,1)+x(n,2) + r(n);
+        e(n,1) = (y(n) + p(n));
+        e(n,2) = y(n) + p(n);
+ 
+        x(n+1, 1) = A(s,1)*x(n,1) - Gimp(s,1)* e(n,1)*V(n) + q(n,1);
+        x(n+1, 2) = A(s,2)*x(n,2) - Gexp(s,1)* e(n,2)*V(n) + q(n,2);
+    end;
+    
+    StratSim(s).x = x;
+    StratSim(s).e = e;
+    StratSim(s).y = y;
+    StratSim(s).V=V';
+    StratSim(s).p=p';
+    
+end
+ 
+StratPar.Bimp = Gimp;
+StratPar.Bexp = Gexp;
+ 
+%% Create plots
+subplot(3,1,1)
+plot(y,'linewidth',2); hold on;
+plot(-p,'linewidth',2,'color', 'black', 'linestyle', '--');
+box off
+set(gcf,'color', 'white')
+set(gca, 'fontweight', 'bold')
+xlim([0 1218])
+ylim([-40 40])
+title('Aiming direction', 'fontweight', 'bold', 'fontsize', 14)
+ylabel('Aiming direction', 'fontweight', 'bold', 'fontsize', 12)
+xlabel('Trial #', 'fontweight', 'bold', 'fontsize', 12)
+legend('Aiming direction', 'Perturbation')
+ 
+subplot(3,1,2)
+plot(sum(x(1:numTrials,:),2),'linewidth',2,'color', 'magenta');
+plot(x(1:numTrials,1),'linewidth',2,'color', 'blue'); hold on;
+plot(x(1:numTrials,2),'linewidth',2,'color', 'red');
+plot(-p,'linewidth',2,'color', 'black', 'linestyle', '--');
+box off
+set(gcf,'color', 'white')
+set(gca, 'fontweight', 'bold')
+xlim([0 1218])
+ylim([-40 40])
+title('Learning', 'fontweight', 'bold', 'fontsize', 14)
+ylabel('States', 'fontweight', 'bold', 'fontsize', 12)
+xlabel('Trial #', 'fontweight', 'bold', 'fontsize', 12)
+legend('Combined learning', 'Implicit', 'Explicit')
+ 
+subplot(3,1,3)
+plot(e,'linewidth',2)
+box off
+set(gcf,'color', 'white')
+set(gca, 'fontweight', 'bold')
+xlim([0 1218])
+ylim([-20 20])
+title('Error', 'fontweight', 'bold', 'fontsize', 14)
+legend('Implicit', 'Explicit')
+ylabel('Error', 'fontweight', 'bold', 'fontsize', 12)
+xlabel('Trial (#)', 'fontweight', 'bold', 'fontsize', 12)
