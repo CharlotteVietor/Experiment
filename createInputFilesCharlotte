@@ -1,0 +1,326 @@
+function [] = createInputFilesCharlotte(subjects)
+%% Generate inputFiles for robot experiment Variability
+% Input:
+%   subjects: vector of subjectIDs, e.g. [000], [001] etc
+%
+% createInputFiles([000])
+% Also creates a folder for subject data in the outputFiles directory
+ 
+% to adjust type of blocks and trialnum, go to for loop 'blocks', line 96
+ 
+% set header texts
+load('SignalG.mat')
+headerFamily = {
+    'BlockName                  s               FAMILY';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               NONE';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerBaseline = {
+    'BlockName                  s               BASELINE';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               NONE';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerLocVoor = {
+    'BlockName                  s               LOCV';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               NONE';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerLocNa = {
+    'BlockName                  s               LOCN';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               NONE';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerNull = {
+    'BlockName                  s               NULL';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               NONE';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerClamp = {
+    'BlockName                  s               CLAMP';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               CLAMP';
+    'PerturbationMag            d               0';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerMultisine1 = {
+    'BlockName                  s               MULTISINE1';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerMultisine2 = {
+    'BlockName                  s               MULTISINE2';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerMultisine3 = {
+    'BlockName                  s               MULTISINE2';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerMultisine4 = {
+    'BlockName                  s               MULTISINE2';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerMultisine5 = {
+    'BlockName                  s               MULTISINE2';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+headerVis = {
+    'BlockName                  s               VIS';
+    'TargetSuccessColor         c               w';
+    'TargetSlowColor            c               b';
+    'TargetFastColor            c               r';
+    'TargetMissColor            c               w';
+    'PerturbationType           s               VIS';
+    'PerturbationMag            d               30';
+    'RetentionTest              i               0';
+    'ITI                        d               1';
+    'END'};
+ 
+variableDeclaration  = {
+    'Origin                     i #origin location';
+    'VisualPerturbationType     i #1 for rotation, 2 for clamp';
+    'showCursor                 i #show cursor during trial';
+    'VisualRotationDeg          d #rotation of cursor in degrees';
+    'Target                     i #target location';
+    'forceType                  i #1 for FF, 2 for EC';
+    'forceGain                  d #strength of forcegain in n/cm';
+    'interTrialInterval         d #length between trials in ms';
+    'NextOrigin                 i #position of origin on next trial';
+    'showBackground             s #0 for white, "String.bmp" for .bmp as background';
+    'getIntention               i #getIntention';
+    'END'};
+ 
+% add variable declaration to end of header
+headerFamily = char([headerFamily; variableDeclaration]);
+headerNull = char([headerNull; variableDeclaration]);
+headerMultisine1 = char([headerMultisine1; variableDeclaration]);
+headerMultisine2 = char([headerMultisine2; variableDeclaration]);
+headerMultisine3 = char([headerMultisine3; variableDeclaration]);
+headerMultisine4 = char([headerMultisine4; variableDeclaration]);
+headerMultisine5 = char([headerMultisine5; variableDeclaration]);
+headerVis = char([headerVis; variableDeclaration]);
+ 
+for subject=subjects
+    
+    for day=1
+        % set list text
+ 
+            t = (1:768)';
+            multisine = 10*(sin(2*pi*(1/768)*t) +sin(2*pi*(2/768)*t) +sin(2*pi*(4/768)*t) +sin(2*pi*(8/768)*t) +sin(2*pi*(16/768)*t));
+            multisine1 = multisine (1:150);
+            multisine2 = multisine (151:300);
+            multisine3 = multisine (301:450);
+            multisine4 = multisine (451:600);
+            multisine5 = multisine (601:768);
+            
+            dir = [2*ones(50,1); 3*ones(50,1); 9*ones(50,1)];
+            dir = dir(randperm(150));
+         
+            for num = 1:numel(multisine1)
+                listMultisine1(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 multisine1(num) dir(num)])};
+            end;
+            
+            for num = 1:numel(multisine2)
+                listMultisine2(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 multisine2(num) dir(num)])};
+            end;
+            
+            for num = 1:numel(multisine3)
+                listMultisine3(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 multisine3(num) dir(num)])};
+            end;
+            
+            for num = 1:numel(multisine4)
+                listMultisine4(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 multisine4(num) dir(num)])};
+            end;
+            
+            dir = [2*ones(56,1); 3*ones(56,1); 9*ones(56,1)];
+            dir = dir(randperm(168));
+            
+            for num = 1:numel(multisine5)
+                listMultisine5(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 multisine5(num) dir(num)])};
+            end;
+            
+            dir = [2*ones(150,1); 3*ones(150,1); 9*ones(150,1)];
+            dir = dir(randperm(450));
+            vis = [zeros(225,1); ones(225,1)];
+            vis = vis(randperm(450));
+            vis(181:210)=0;
+            vis(241:270)=1;
+            for num = 1:450
+                listNull1(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [vis(num) 0 dir(num)])};
+            end;
+            
+            dir = [2*ones(50,1); 3*ones(50,1); 9*ones(50,1)];
+            dir = dir(randperm(150));
+            
+            for num = 1:150
+                listFamily(num,:) = {sprintf('1 1 %i %f %i 0 0.0 1000.0 1 0 0', [1 0 dir(num)])};
+            end;
+            
+        % Block loop, set amount of trials and blocktype here
+        for block=1:9 % amount of blocks
+            clear listRep;
+            switch(block)
+                case {1}
+                    headerText = headerFamily;
+                    listText = listFamily;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials   
+                    randomize=0;
+                    binSize = 100; % size of bin, 8 because we have 8 target locations
+                case {2,3,4}
+                    headerText = headerNull;
+                    ind = ((block-2)*150+1):(block-1)*150;
+                    listText = listNull1(ind,:);
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 150;    
+                case {5}
+                    headerText = headerMultisine1;
+                    listText = listMultisine1;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 150; % size of bin, 8 because we have 8 target locations 
+                case {6}
+                    headerText = headerMultisine2;
+                    listText = listMultisine2;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 150; % size of bin, 8 because we have 8 target locations 
+                case {7}
+                    headerText = headerMultisine3;
+                    listText = listMultisine3;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 150; % size of bin, 8 because we have 8 target locations 
+                case {8}
+                    headerText = headerMultisine4;
+                    listText = listMultisine4;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 150; % size of bin, 8 because we have 8 target locations 
+                 case {9}
+                    headerText = headerMultisine5;
+                    listText = listMultisine5;
+                    numberOfBins = 1; % 32 is 32x3 = 96 trials
+                    randomize=0;
+                    binSize = 168; % size of bin, 8 because we have 8 target locations  
+            end
+ 
+ 
+                % loop over bins while repeating the listText in a random order
+                if numberOfBins>1
+                    for bin=1:numberOfBins
+                        if randomize==1
+                            randomList = randperm(size(listText,1));
+                            listRep((bin-1)*binSize+1:bin*binSize,:) = listText(randomList,:);
+                        else    
+                            listRep((bin-1)*binSize+1:bin*binSize,:) = listText;
+                        end;
+                    end
+                else
+                    listRep = listText;
+                end;
+                fDirectory = [pwd filesep 'InputFiles' filesep];
+                if ~exist(fDirectory,'dir')
+                    error('ERROR, ERROR, BEEP BOOP.... Directory InputFiles does not exist, you are probably working in the wrong directory!');
+                end
+ 
+                [headLines, ~] = size(headerText);
+                [listLines, ~] = size(listRep);
+ 
+                subj = sprintf('%03d', subject);
+                fName = [fDirectory subj '_Day' int2str(day) '_Block' int2str(block) '.input'];
+                fid = fopen(fName,'w');
+ 
+                if fid ~= -1
+                    for headLine=1:headLines
+                        fprintf(fid,'%s\r\n',headerText(headLine,:));       %# Print the string
+                    end;
+                    for listLine=1:listLines
+                        fprintf(fid,'%s\r\n',listRep{listLine,:});       %# Print the string
+                    end;
+                    fclose(fid);
+                end
+        end
+        clear listRep    
+    end
+createOutputFolders(subject);    
+end;
+ 
